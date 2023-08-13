@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-radius: 3px;
+        }
+
+        .task-input {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .task-input input,
+        .task-input select {
+            margin-right: 10px;
+        }
+
+        #add-task {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .progress {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #007bff;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <ul id="task-list">
+            <!-- Tasks will be dynamically added here -->
+        </ul>
+        <div class="task-input">
+            <input type="text" id="task-name" placeholder="Task name">
+            <input type="date" id="task-deadline">
+            <select id="task-priority">
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+            <button id="add-task">Add Task</button>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" id="progress-bar" style="width: 0;"></div>
+            <span id="progress-label">0%</span>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const taskList = document.getElementById("task-list");
+            const taskName = document.getElementById("task-name");
+            const taskDeadline = document.getElementById("task-deadline");
+            const taskPriority = document.getElementById("task-priority");
+            const addTaskButton = document.getElementById("add-task");
+            const progressBar = document.getElementById("progress-bar");
+            const progressLabel = document.getElementById("progress-label");
+
+            let tasks = [];
+            
+            addTaskButton.addEventListener("click", function () {
+                const name = taskName.value;
+                const deadline = taskDeadline.value;
+                const priority = taskPriority.value;
+
+                if (name && deadline && priority) {
+                    const task = { name, deadline, priority, completed: false };
+                    tasks.push(task);
+                    updateTaskList();
+                    updateProgress();
+                    clearInputFields();
+                } else {
+                    alert("Please fill in all task details.");
+                }
+            });
+
+            function updateTaskList() {
+                taskList.innerHTML = "";
+                tasks.forEach((task, index) => {
+                    const taskItem = document.createElement("li");
+                    taskItem.innerHTML = `
+                        <div>
+                            ${task.name} (Priority: ${task.priority}, Deadline: ${task.deadline})
+                        </div>
+                        <button onclick="completeTask(${index})">Complete</button>
+                    `;
+                    taskList.appendChild(taskItem);
+                });
+            }
+
+            function updateProgress() {
+                const completedTasks = tasks.filter(task => task.completed).length;
+                const totalTasks = tasks.length;
+                const progress = (completedTasks / totalTasks) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressLabel.textContent = `${progress.toFixed(2)}%`;
+            }
+
+            function completeTask(index) {
+                tasks[index].completed = true;
+                updateTaskList();
+                updateProgress();
+            }
+
+            function clearInputFields() {
+                taskName.value = "";
+                taskDeadline.value = "";
+                taskPriority.value = "high";
+            }
+        });
+    </script>
+</body>
+</html>
